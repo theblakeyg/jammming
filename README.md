@@ -1,2 +1,3 @@
-# jammming
-Jammming - Spotify Playlist Creator
+# Jammming
+
+Jammming is a Spotify Playlist Creator
