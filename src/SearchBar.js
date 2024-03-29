@@ -1,38 +1,46 @@
 import React, { useState } from "react";
 
-function SearchBar({ setSearchResults }) {
+function SearchBar({ setSearchResults, accessToken }) {
 
-    const [searchBar, setSearchBar] = useState('');
+    const [searchString, setSearchString] = useState('');
 
     const handleUserInput = (e) => {
-        setSearchBar(e.target.value);
+        setSearchString(e.target.value);
     }
 
-    const searchForTracks = (e) => {
-        e.preventDefault();
-        const tracks = [{
-            name: 'Name1',
-            artist: 'Artist1',
-            album: 'Album1',
-            id: 1
-        }, {
-            name: 'Name2',
-            artist: 'Artist2',
-            album: 'Album3',
-            id: 2
-        }, {
-            name: 'Name3',
-            artist: 'Artist3',
-            album: 'Album3',
-            id: 3
-        }, {
-            name: 'Name4',
-            artist: 'Artist4',
-            album: 'Album4',
-            id: 4
-        }]
+    const formatTracks = (spotifyTracks) => {
+        return spotifyTracks.map((spotifyTrack) => {
+            return {name: spotifyTrack.name,
+            artist: spotifyTrack.artists[0].name,
+            album: spotifyTrack.album.name,
+            id: spotifyTrack.id}
+        })
+    }
 
-        setSearchResults(tracks);
+    const searchForTracks = async (e) => {
+        e.preventDefault();
+
+        const searchEndpoint = `https://api.spotify.com/v1/search?q=${encodeURIComponent(searchString)}&type=track`;
+
+        try {
+            const response = await fetch(searchEndpoint, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to search for tracks on Spotify');
+            }
+
+            const data = await response.json();
+            const spotifyTracks = data.tracks.items;
+            setSearchResults(formatTracks(spotifyTracks));
+        } catch (error) {
+            console.error('Error searching for tracks:', error.message);
+            return [];
+        }
     }
 
     return (
@@ -41,7 +49,7 @@ function SearchBar({ setSearchResults }) {
             <input
                 type='text'
                 name='trackSearch'
-                value={searchBar}
+                value={searchString}
                 onChange={handleUserInput}
                 id='trackSearch'></input>
             <button type='submit'>Search</button>
