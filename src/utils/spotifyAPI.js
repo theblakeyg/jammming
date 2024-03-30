@@ -22,7 +22,7 @@ const SpotifyAPI = {
 
         const accessTokenMatch = window.location.href.match(/access_token=([^&]*)/);
         const expiresInMatch = window.location.href.match(/expires_in=([^&]*)/);
-        
+
         if (accessTokenMatch && expiresInMatch) {
             accessToken = accessTokenMatch[1];
             const expiresIn = Number(expiresInMatch[1]);
@@ -35,6 +35,8 @@ const SpotifyAPI = {
         }
     },
     async searchForTracks(searchString) {
+        const accessToken = this.getAccessToken();
+
         const searchEndpoint = `https://api.spotify.com/v1/search?q=${encodeURIComponent(searchString)}&type=track`;
 
         try {
@@ -56,29 +58,49 @@ const SpotifyAPI = {
             console.error('Error searching for tracks:', error.message);
             return [];
         }
-    }
+    },
+    async createNewPlaylist(playlistName, trackUris) {
+        try {
+            const accessToken = this.getAccessToken();
+            const headers = { Authorization: `Bearer ${accessToken}` };
 
-    // search(term) {
-    //     const accessToken = Spotify.getAccessToken();
-    //     return fetch(`https://api.spotify.com/v1/search?type=track&q=${term}`, {
-    //         headers: {
-    //             Authorization: `Bearer ${accessToken}`
-    //         }
-    //     }).then(response => {
-    //         return response.json();
-    //     }).then(jsonResponse => {
-    //         if (!jsonResponse.tracks) {
-    //             return [];
-    //         }
-    //         return jsonResponse.tracks.items.map(track => ({
-    //             id: track.id,
-    //             name: track.name,
-    //             artist: track.artists[0].name,
-    //             album: track.album.name,
-    //             uri: track.uri
-    //         }));
-    //     });
-    // }
+            //Get userId
+            const meResponse = await fetch('https://api.spotify.com/v1/me', { headers });
+            if (!meResponse.ok) {
+                throw new Error('Failed to fetch user ID');
+            }
+            const meJson = await meResponse.json();
+            const userId = meJson.id;
+            console.log(`Get user id: ${userId}`);
+            console.log(`User playlistName: ${playlistName}`);
+
+            //Create Playlist
+            const createPlaylistResponse = await fetch(`https://api.spotify.com/v1/users/${userId}/playlists`, {
+                headers,
+                method: 'POST',
+                body: JSON.stringify({ name: playlistName })
+            });
+            if (!createPlaylistResponse.ok) {
+                throw new Error('Failed to create playlist');
+            }
+            const createPlaylistJson = await createPlaylistResponse.json();
+            const playlistId = createPlaylistJson.id;
+
+            //Add tracks to playlist
+            const addTracksResponse = await fetch(`https://api.spotify.com/v1/users/${userId}/playlists/${playlistId}/tracks`, {
+                headers,
+                method: 'POST',
+                body: JSON.stringify({ uris: trackUris })
+            });
+            if (!addTracksResponse.ok) {
+                throw new Error('Failed to add tracks to playlist');
+            }
+
+            return true;
+        } catch (error) {
+            console.log(error.message)
+        }
+    }
 }
 
 export default SpotifyAPI;

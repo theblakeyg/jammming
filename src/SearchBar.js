@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 
-function SearchBar({onSearch }) {
+function SearchBar({ onSearch }) {
 
     const [searchString, setSearchString] = useState('');
 
@@ -8,7 +8,7 @@ function SearchBar({onSearch }) {
         setSearchString(e.target.value);
     }
 
-    const search = useCallback(()=>{
+    const search = useCallback(() => {
         onSearch(searchString);
     }, [onSearch, searchString])
 

@@ -1,18 +1,17 @@
 import React, { useState } from "react";
 import Track from "./Track";
 
-function Playlist({ tracklist, onRemoveTrack }) {
+function Playlist({ tracklist, playlistName, onRemoveTrack, onPlaylistNameChange, onCreatePlaylist }) {
 
-    const [playlistName, setPlaylistName] = useState('My Playlist');
 
     const handleNameChange = (e) => {
-        setPlaylistName(e.target.value);
+        onPlaylistNameChange(e.target.value);
     }
 
-    const savePlaylist = () => {
-        console.log(playlistName);
-        console.log(tracklist);
-    }
+    // const savePlaylist = () => {
+    //     console.log(playlistName);
+    //     console.log(tracklist);
+    // }
 
     return (
         <div>
@@ -21,7 +20,7 @@ function Playlist({ tracklist, onRemoveTrack }) {
             {tracklist.map((track) => (
                 <Track key={track.id} track={track} onRemove={() => onRemoveTrack(track)} />
             ))}
-            <button onClick={savePlaylist}>Save Playlist</button>
+            <button onClick={onCreatePlaylist}>Save Playlist</button>
         </div>
     )
 }

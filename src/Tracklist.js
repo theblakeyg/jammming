@@ -10,7 +10,7 @@ function Tracklist({ tracklist, onRemoveTrack }) {
             This is a test
             {tracklist.map((track) => {
                 console.log(track);
-                <Track key={track.id} track={track} onRemove={()=>onRemoveTrack(track)} />
+                <Track key={track.id} track={track} onRemove={() => onRemoveTrack(track)} />
             })}
         </div>
     )

@@ -7,12 +7,13 @@ import './App.css';
 
 function App() {
   const [searchResults, setSearchResults] = useState();
+  const [playlistName, setPlaylistName] = useState('My Playlist');
   const [playlist, setPlaylist] = useState([]);
 
   const search = useCallback((term) => {
     SpotifyAPI.searchForTracks(term).then(setSearchResults);
   }, []);
-  
+
   const addTrackToPlaylist = (track) => {
     setPlaylist([...playlist, track]);
     // Remove the track from search results
@@ -24,12 +25,19 @@ function App() {
     setSearchResults([...searchResults, track]);
   }
 
+  const createNewPlaylist = useCallback(() => {
+    const trackUris = playlist.map((track) => track.uri);
+    SpotifyAPI.createNewPlaylist(playlistName, trackUris).then(()=>{
+      setPlaylistName("New Playlist");
+      setPlaylist([]);
+    });
+  }, [playlistName, playlist])
+
   return (
     <div>
-      This is a test
       <SearchBar onSearch={search} />
-      <SearchResults searchResults={searchResults} onAddTrack={addTrackToPlaylist}/>
-      <Playlist tracklist={playlist} onRemoveTrack={removeTrackFromPlaylist}/>
+      <SearchResults searchResults={searchResults} onAddTrack={addTrackToPlaylist} />
+      <Playlist tracklist={playlist} playlistName={playlistName} onRemoveTrack={removeTrackFromPlaylist} onCreatePlaylist={createNewPlaylist} onPlaylistNameChange={setPlaylistName}/>
     </div>
 
   );
