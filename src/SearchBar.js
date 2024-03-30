@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 
-function SearchBar({ setSearchResults, accessToken }) {
+function SearchBar({onSearch }) {
 
     const [searchString, setSearchString] = useState('');
 
@@ -8,43 +8,12 @@ function SearchBar({ setSearchResults, accessToken }) {
         setSearchString(e.target.value);
     }
 
-    const formatTracks = (spotifyTracks) => {
-        return spotifyTracks.map((spotifyTrack) => {
-            return {name: spotifyTrack.name,
-            artist: spotifyTrack.artists[0].name,
-            album: spotifyTrack.album.name,
-            id: spotifyTrack.id}
-        })
-    }
-
-    const searchForTracks = async (e) => {
-        e.preventDefault();
-
-        const searchEndpoint = `https://api.spotify.com/v1/search?q=${encodeURIComponent(searchString)}&type=track`;
-
-        try {
-            const response = await fetch(searchEndpoint, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to search for tracks on Spotify');
-            }
-
-            const data = await response.json();
-            const spotifyTracks = data.tracks.items;
-            setSearchResults(formatTracks(spotifyTracks));
-        } catch (error) {
-            console.error('Error searching for tracks:', error.message);
-            return [];
-        }
-    }
+    const search = useCallback(()=>{
+        onSearch(searchString);
+    }, [onSearch, searchString])
 
     return (
-        <form onSubmit={searchForTracks}>
+        <div>
             <label htmlFor="trackSearch">Track Search</label>
             <input
                 type='text'
@@ -52,8 +21,8 @@ function SearchBar({ setSearchResults, accessToken }) {
                 value={searchString}
                 onChange={handleUserInput}
                 id='trackSearch'></input>
-            <button type='submit'>Search</button>
-        </form>
+            <button type='submit' onClick={search}>Search</button>
+        </div>
     )
 }
 
