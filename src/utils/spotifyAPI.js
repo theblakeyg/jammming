@@ -1,5 +1,5 @@
-const clientId = '1253c0ac9a03466abf3e283e30d582a3';
-const redirectUri = 'http://localhost:3000'; // Should be registered in your Spotify Developer Dashboard
+const clientId = process.env.REACT_APP_SPOTIFY_CLIENT_ID;
+const redirectUri = process.env.REACT_APP_SPOTIFY_REDIRECT_URI;
 let accessToken;
 
 const formatTracks = (spotifyTracks) => {
