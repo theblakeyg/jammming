@@ -71,8 +71,6 @@ const SpotifyAPI = {
             }
             const meJson = await meResponse.json();
             const userId = meJson.id;
-            console.log(`Get user id: ${userId}`);
-            console.log(`User playlistName: ${playlistName}`);
 
             //Create Playlist
             const createPlaylistResponse = await fetch(`https://api.spotify.com/v1/users/${userId}/playlists`, {
