@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
-import SearchBar from './SearchBar';
-import SearchResults from './SearchResults';
-import Playlist from './Playlist';
+import SearchBar from './SearchBar/SearchBar';
+import SearchResults from './SearchResults/SearchResults';
+import Playlist from './Playlist/Playlist';
 import SpotifyAPI from './utils/spotifyAPI'
 import './App.css';
 
@@ -27,7 +27,7 @@ function App() {
 
   const createNewPlaylist = useCallback(() => {
     const trackUris = playlist.map((track) => track.uri);
-    SpotifyAPI.createNewPlaylist(playlistName, trackUris).then(()=>{
+    SpotifyAPI.createNewPlaylist(playlistName, trackUris).then(() => {
       setPlaylistName("New Playlist");
       setPlaylist([]);
     });
@@ -35,9 +35,13 @@ function App() {
 
   return (
     <div>
-      <SearchBar onSearch={search} />
-      <SearchResults searchResults={searchResults} onAddTrack={addTrackToPlaylist} />
-      <Playlist tracklist={playlist} playlistName={playlistName} onRemoveTrack={removeTrackFromPlaylist} onCreatePlaylist={createNewPlaylist} onPlaylistNameChange={setPlaylistName}/>
+      <div className='App'>
+        <SearchBar onSearch={search} />
+        <div className='App-playlist'>
+          <SearchResults searchResults={searchResults} onAddTrack={addTrackToPlaylist} />
+          <Playlist tracklist={playlist} playlistName={playlistName} onRemoveTrack={removeTrackFromPlaylist} onCreatePlaylist={createNewPlaylist} onPlaylistNameChange={setPlaylistName} />
+        </div>
+      </div>
     </div>
 
   );

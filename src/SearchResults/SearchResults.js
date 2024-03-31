@@ -1,10 +1,12 @@
 import React from "react";
-import Track from './Track';
+import Track from '../Track/Track';
+
+import "./SearchResults.css";
 
 function SearchResults({ searchResults, onAddTrack }) {
 
     return (
-        <div>
+        <div className='SearchResults'>
             {searchResults && searchResults.map((track) => (
                 <Track key={track.id} track={track} onAdd={()=>onAddTrack(track)}/>
             ))}

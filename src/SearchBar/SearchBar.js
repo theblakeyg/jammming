@@ -1,5 +1,7 @@
 import React, { useCallback, useState } from "react";
 
+import "./SearchBar.css"
+
 function SearchBar({ onSearch }) {
 
     const [searchString, setSearchString] = useState('');
@@ -13,15 +15,16 @@ function SearchBar({ onSearch }) {
     }, [onSearch, searchString])
 
     return (
-        <div>
+        <div className='SearchBar'>
             <label htmlFor="trackSearch">Track Search</label>
             <input
+                placeholder="Enter A Song Title"
                 type='text'
                 name='trackSearch'
                 value={searchString}
                 onChange={handleUserInput}
                 id='trackSearch'></input>
-            <button type='submit' onClick={search}>Search</button>
+            <button className='SearchButton' type='submit' onClick={search}>Search</button>
         </div>
     )
 }
